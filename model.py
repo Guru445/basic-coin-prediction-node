@@ -3,8 +3,10 @@ import pickle
 from zipfile import ZipFile
 from datetime import datetime
 import pandas as pd
+imort numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+# from sklearn.linear_model import LinearRegression
+from sklearn import linear_model
 from updater import download_binance_monthly_data, download_binance_daily_data
 from config import data_base_path, model_file_path
 
@@ -15,8 +17,8 @@ training_price_data_path = os.path.join(data_base_path, "eth_price_data.csv")
 
 def download_data():
     cm_or_um = "um"
-    symbols = ["ETHUSDT"]
-    intervals = ["1d"]
+    symbols = ["ETHUSDT", "BTCUSDT"]
+    intervals = ["1d", "1w"]
     years = ["2020", "2021", "2022", "2023", "2024"]
     months = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
     download_path = binance_data_path
@@ -91,8 +93,10 @@ def train_model():
     x_train, _, y_train, _ = train_test_split(x, y, test_size=0.2, random_state=0)
 
     # Train the model
-    model = LinearRegression()
+    print("begin training the model")
+    model = linear_model.LassoLars(alpha=.1)
     model.fit(x_train, y_train)
+    print("Training completed")
 
     # create the model's parent directory if it doesn't exist
     os.makedirs(os.path.dirname(model_file_path), exist_ok=True)
